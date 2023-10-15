@@ -3,7 +3,7 @@
 * Background
     * 기존 방식의 한계점
         - the number of OPs required to relate signals from two arbitary input or output positions grows **<- cause**
-        - linearly for ConvS2S andd logarithmically for ByteNet. **->**This Makes it more difficult to learn dependencies between distant positions. **<- effect** 
+        - linearly for ConvS2S andd logarithmically for ByteNet. This Makes it more difficult to learn dependencies between distant positions. **<- effect** 
     * In the transformer
         - this is reduced to a <span style='background-color: $ffdce0'>**_constant number of operations,_**</span> albeit at the cost of reduced dffective resolution due to <span style='background-color: $ffdce0'>**_averaging attention-wighted positions._**</span>
     * key
@@ -16,4 +16,8 @@
 * Model Architecture
     * Most competetive neural seq transduction models 
         - encoder : maps an input seq of symbol representations **_x_ = (_x~1_, _x~2_, ..., _x~n_)** to a sequence of continuous representations **_z_ = (_z~1_, _z~2_, ..., _z~n_)**
-        - decoder : Given **_z_ = (_z~1_, _z~2_, ..., _z~n_)** generate an ouput seq **(_y~1_, _y~2_, ..., _y~n_)** of symbols **one element at ta time**
+        - decoder : Given **_z_ = (_z~1_, _z~2_, ..., _z~n_)** generate an ouput seq **(_y~1_, _y~2_, ..., _y~n_)** of symbols **one element at ta time**, consuming the previously generated symbols as additional input when generating the next.
+    * **_Transformer follows this overall architecture using stacked slf-attention and pointwise, FC layers for both the encoder and decoder, shown in the left and right halves of picutre respectively_**
+        
+        ![screensh](https://jalammar.github.io/images/t/transformer_resideual_layer_norm_3.png)
+        출처 : https://jalammar.github.io/images/t/transformer_resideual_layer_norm_3.png
