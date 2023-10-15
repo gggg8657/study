@@ -7,7 +7,7 @@
     * In the transformer
         - this is reduced to a <span style='background-color: $ffdce0'>**_constant number of operations,_**</span> albeit at the cost of reduced dffective resolution due to <span style='background-color: $ffdce0'>**_averaging attention-wighted positions._**</span>
     * key
-        - <span style='background-color: $ffdce0'>**_Attention_**</span> is a generalisation of the idea of <span style='background-color: $ffdce0'>**_weighting inputs by distance_**</span>
+        - <span style='background-color: $ffdce0'>**_Attention_**</span> is a generalisation of the idea of <span style='background-color: $ffdce0'>**_weighting inputs by distance._**</span>
     * Self-attention (intra-attention)
         - is attention mechnism <span style='background-color: $ffdce0'>**_relating different positions of a sngle seq_**</span> in order to compute a _representation of the seq_
     * End-to-end memory networks
