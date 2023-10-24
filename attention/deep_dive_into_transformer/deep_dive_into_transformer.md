@@ -377,4 +377,5 @@ Standard batch-norm
     4. https://wikidocs.net/162098
     5. https://cs182sp21.github.io/
     6. https://www.youtube.com/@rail7462
+    7. https://medium.com/@luvverma2011/demystifying-attention-mechanisms-in-sequence-to-sequence-models-transformers-part-1-98e2962408f0
     
