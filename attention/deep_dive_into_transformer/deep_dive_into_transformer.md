@@ -368,3 +368,13 @@ Standard batch-norm
 이런 구조를 갖고있습니다.
 
 ![Alt text](image-24.png)
+
+### references
+
+    1. https://jalammar.github.io/illustrated-transformer/
+    2. https://towardsdatascience.com/what-is-residual-connection-efb07cab0d55
+    3. https://towardsdatascience.com/what-is-residual-connection-efb07cab0d55
+    4. https://wikidocs.net/162098
+    5. https://cs182sp21.github.io/
+    6. https://www.youtube.com/@rail7462
+    
