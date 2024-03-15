@@ -1,4 +1,4 @@
-# GAT
+# GAT VS Transformer Encoder
 
 
 ---
@@ -15,4 +15,28 @@
 
     - GAT 특징: 연결된 노드들 간의 어텐션 사용 -> 그래프 구조에 대한 어텐션 메커니즘이 적용 가능해진다 (Graph topology를 활용할 수 있다는 장점)
     - 그러나, FC graph라면 self attention 과 차이가 없으므로, graph topology 에 대한 장점 상쇄 됨
+
+
+.
+.
+.
+수식 정리중
+$$ 
+\mathbf{a}_{i j}=\mathrm{softmax}\left(\mathbf{a}_{i j}\right)=\frac{\exp \left(\mathbf{a}_{i j}\right)}{\sum_{k} \exp \left(\mathbf{a}_{i k}\right)}
+$$
+$$
+\mathbf{e}_{i j}=\mathrm{LeakyReLU}\left(\mathbf{W}_{e} \cdot\left[\mathbf{h}_{i}, \mathbf{h}_{j}\right]\right)
+$$
+$$
+\mathbf{a}_{i j}=\mathrm{softmax}\left(\mathbf{a}_{i j}\right)=\frac{\exp \left(\mathbf{a}_{i j}\right)}{\sum_{k} \exp \left(\mathbf{a}_{i k}\right)}
+$$
+$$
+\mathbf{h}_{i}^{\prime}=\mathbf{h}_{i} \cdot \mathbf{a}_{i j}
+$$
+$$
+\mathbf{h}_{i}^{\prime}=\mathbf{h}_{i} \cdot \mathbf{a}_{i j}
+$$
+$$
+\mathbf{h}_{i}^{\prime}=\mathbf{h}_{i} \cdot \mathbf{a}_{i j}
+$$
 
