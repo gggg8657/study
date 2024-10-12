@@ -1,0 +1,32 @@
+BFS 탐색순서
+A - B - C - D - E - F - G
+이순으로
+"DEPTH"가 작은 순서대로 진행
+from collections import deque
+isvisit = [False for  in range(N)]
+queue = deque()
+queue.append([y,x])
+isvisit[y][x] = True
+while queue:
+    y,x = queue.popleft()
+    for k in range(4):
+        ny nx
+        if 어쩌구
+            queue.append
+            is_visit = True
+
+
+
+DFS 탐색순서
+A - B - D - E - C - F - G
+이걸 어케 짜느냐??
+일단 계속 파고파고 들어가기 - >> 재귀로 구현
+is_visit = [False for  in range(~)]
+def dfs(now,):
+    print(now)
+    route = graph[now]
+    for r in route:
+        dfs(r)
+graph = {A:[B,C] , B : [D,E] , C : [F,G]}
+
+return dfs('A')
