@@ -29,8 +29,3 @@ N과 비용 행렬이 주어졌을 때, 가장 적은 비용을 들이는 외판
 예제 출력 1
 35
 '''
-
-import sys
-
-input = sys.stdin.readline
-

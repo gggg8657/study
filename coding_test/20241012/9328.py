@@ -1,67 +1,93 @@
-'''
-열쇠 다국어
-
-시간 제한	메모리 제한	제출	정답	맞힌 사람	정답 비율
-1 초	256 MB	23170	6942	4782	27.360%
-문제
-상근이는 1층 빌딩에 침입해 매우 중요한 문서를 훔쳐오려고 한다. 상근이가 가지고 있는 평면도에는 문서의 위치가 모두 나타나 있다. 빌딩의 문은 모두 잠겨있기 때문에, 문을 열려면 열쇠가 필요하다. 상근이는 일부 열쇠를 이미 가지고 있고, 일부 열쇠는 빌딩의 바닥에 놓여져 있다. 상근이는 상하좌우로만 이동할 수 있다.
-
-상근이가 훔칠 수 있는 문서의 최대 개수를 구하는 프로그램을 작성하시오.
-
-입력
-첫째 줄에 테스트 케이스의 개수가 주어진다. 테스트 케이스의 수는 100개를 넘지 않는다.
-
-각 테스트 케이스의 첫째 줄에는 지도의 높이와 너비 h와 w (2 ≤ h, w ≤ 100)가 주어진다. 다음 h개 줄에는 빌딩을 나타내는 w개의 문자가 주어지며, 각 문자는 다음 중 하나이다.
-
-'.'는 빈 공간을 나타낸다.
-'*'는 벽을 나타내며, 상근이는 벽을 통과할 수 없다.
-'$'는 상근이가 훔쳐야하는 문서이다.
-알파벳 대문자는 문을 나타낸다.
-알파벳 소문자는 열쇠를 나타내며, 그 문자의 대문자인 모든 문을 열 수 있다.
-마지막 줄에는 상근이가 이미 가지고 있는 열쇠가 공백없이 주어진다. 만약, 열쇠를 하나도 가지고 있지 않는 경우에는 "0"이 주어진다.
-
-상근이는 처음에는 빌딩의 밖에 있으며, 빌딩 가장자리의 벽이 아닌 곳을 통해 빌딩 안팎을 드나들 수 있다. 각각의 문에 대해서, 그 문을 열 수 있는 열쇠의 개수는 0개, 1개, 또는 그 이상이고, 각각의 열쇠에 대해서, 그 열쇠로 열 수 있는 문의 개수도 0개, 1개, 또는 그 이상이다. 열쇠는 여러 번 사용할 수 있다.
-
-출력
-각 테스트 케이스 마다, 상근이가 훔칠 수 있는 문서의 최대 개수를 출력한다.
-
-예제 입력 1
-3
-5 17
-*****************
-.............**$*
-*B*A*P*C**X*Y*.X.
-*y*x*a*p**$*$**$*
-*****************
-cz
-5 11
-*.*********
-*...*...*x*
-*X*.*.*.*.*
-*$*...*...*
-***********
-0
-7 7
-*ABCDE*
-X.....F
-W.$$$.G
-V.$$$.H
-U.$$$.J
-T.....K
-*SQPML*
-irony
-
-예제 출력 1
-3
-1
-0
-출처
-'''
-
+from collections import deque
 import sys
 
 input = sys.stdin.readline
 
+# 상하좌우 이동
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
+
+q = deque()
+def bfs():
+    global result
+
+    q.append((0, 0))  # (x, y)
+    visit[0][0] = True
+
+    while q:
+        x, y = q.popleft()
+
+        for i in range(4):
+            nx, ny = x + dx[i], y + dy[i]
+
+            if 0 <= nx <= h + 1 and 0 <= ny <= w + 1 and not visit[nx][ny] and field[nx][ny] != '*':
+                visit[nx][ny] = True
+
+                # 문서를 발견한 경우
+                if field[nx][ny] == '$':
+                    result += 1
+                    field[nx][ny] = '.'
+                    q.append((nx, ny))
+
+                # 열쇠를 발견한 경우
+                elif 'a' <= field[nx][ny] <= 'z':
+                    key_idx = ord(field[nx][ny]) - ord('a')
+                    if not keys[key_idx]:  # 새로운 열쇠라면
+                        keys[key_idx] = True
+                        q.append((nx, ny))
+                        open_doors(key_idx)
+                    field[nx][ny] = '.'
+                    q.append((nx, ny))
+
+                # 문을 발견한 경우
+                elif 'A' <= field[nx][ny] <= 'Z':
+                    door_idx = ord(field[nx][ny]) - ord('A')
+                    if keys[door_idx]:  # 열쇠가 있으면 문을 열고 들어간다
+                        field[nx][ny] = '.'
+                        q.append((nx, ny))
+                    else:
+                        doors[door_idx].append((nx, ny))
+
+                # 빈 공간인 경우
+                else:
+                    q.append((nx, ny))
 
 
+def open_doors(key_idx):
+    while doors[key_idx]:
+        x, y = doors[key_idx].popleft()
+        field[x][y] = '.'
+        visit[x][y] = True
+        q.append((x, y))
 
+
+for _ in range(int(input())):
+    h, w = map(int, input().split())
+    field = [['.'] * (w + 2) for _ in range(h + 2)]
+
+    # 필드를 입력 받음
+    for i in range(1, h + 1):
+        line = input().strip()
+        for j in range(1, w + 1):
+            field[i][j] = line[j - 1]
+
+    # 초기 열쇠 목록을 입력 받음
+    initial_keys = input().strip()
+    keys = [False] * 26
+    if initial_keys != '0':
+        for ch in initial_keys:
+            keys[ord(ch) - ord('a')] = True
+
+    # 방문 체크
+    visit = [[False] * (w + 2) for _ in range(h + 2)]
+
+    # 문 위치 저장
+    doors = [deque() for _ in range(26)]
+
+    # 훔친 문서 개수
+    result = 0
+
+    # BFS 탐색
+    bfs()
+
+    print(result)
