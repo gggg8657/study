@@ -50,6 +50,7 @@ for i in range(n):
 
 # print(search_dict)
 # 방문 확인용
+print(search_dict)
 is_visited = [False for _ in range(n)]
 # 결과 저장용
 answer = []
