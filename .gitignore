@@ -1,9 +1,9 @@
 /coding_test/202410103_kakao_mobility_2nd_ignore/*
-*.pdf
+.pdf
 *.zip
 *.docx
 *.doc
-*.pptx
+.pptx
 
 *.gitignore
 *.jpg
