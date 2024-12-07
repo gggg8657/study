@@ -61,7 +61,7 @@ while q:
         if world[nrow][ncol] == 99:
             if row == M:
                 if col<M : # 서쪽의 맨 윗줄
-
+                    nrow,ncol = ncol,nrow # M, 0 1 2 -> 0 1 2 , M
                 elif col>2*M: # 동쪽의 맨 윗줄
                 else: #가운데칸
             elif row==2*M-1:
