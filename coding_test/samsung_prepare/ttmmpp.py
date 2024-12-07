@@ -131,3 +131,5 @@ def get_combinations_recursive(arr, r):
 arr = [1, 2, 3, 4]
 r = 2
 print(get_combinations_recursive(arr, r))
+
+def make_snake(arr):
