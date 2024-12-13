@@ -22,11 +22,13 @@ A - B - D - E - C - F - G
 이걸 어케 짜느냐??
 일단 계속 파고파고 들어가기 - >> 재귀로 구현
 is_visit = [False for  in range(~)]
+
+graph = {A:[B,C] , B : [D,E] , C : [F,G]}
 def dfs(now,):
     print(now)
     route = graph[now]
     for r in route:
         dfs(r)
-graph = {A:[B,C] , B : [D,E] , C : [F,G]}
 
 return dfs('A')
+
