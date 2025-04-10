@@ -1,8 +1,9 @@
-
 def Jo_mo_check(jo_mo_checklist, item):
-    for i in range(len(item)):
-        jo_mo_checklist[item[i]-1] = 1 # 1 means jo 0 means mo
+    for i in item:
+        jo_mo_checklist[i-1] = 1
     return jo_mo_checklist
+
+
 N = int(input())
 
 work = []
