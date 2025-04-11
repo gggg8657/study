@@ -6,9 +6,6 @@ class atom:
         self.s = 0
         self.d = 0
 
-def check(q):
-
-def Divide(q,mem):
 
 
 n , m , k = map(int, input().split())
@@ -23,6 +20,7 @@ for _ in range(m):
     a.r, a.c, a.m, a.s, a.d = map(int, input().split())
     q.append(a)
 
+<<<<<<< HEAD
 for _ in range(k):
     tmpq = deque() #이동된 원자 위치 저장할 q 초기화
     while q:
@@ -35,19 +33,11 @@ for _ in range(k):
         #     ca.r = nr
         #     ca.c = nc
         #     tmpq.append(ca)
+=======
+while q and k !=0:
+    ca = q.popleft()
+>>>>>>> parent of 6d81c8c (atom bang 중간)
 
-    mem, is_collapse = check(tmpq) # 합쳐진거 있는지 확인 mem은 deque로 구성 : 합쳐진 것들의 집합을 mem 에 포함 즉 mem.popleft() -> 합쳐진거 집합 1 mem.popleft().popleft() -> 합쳐진거 집합 1의 원자 하나
-    if is_collapse:  # 합쳐진게 있음
-        Divide(tmpq, mem)  # update q and does not return
-    for item in tmpq: q.append(item) #이동된 원자의 위치 q에 추가
-
-
-
-res = 0
-for ato in q:
-    res += ato.m
-
-print(res)
 '''
 init -> 1sec -> if check(q) == True : # 합쳐진게 있음
                     원자분해 -> 4개로 ()
