@@ -24,10 +24,10 @@ for _ in range(m):
     q.append(a)
 
 for _ in range(k):
-    tmpq = deque() #이동된 ㅇ원자 위치 저장할 q 초기화
+    tmpq = deque() #이동된 원자 위치 저장할 q 초기화
     while q:
         ca = q.popleft()
-        nr, nc = ca.s*(ca.r + dr[ca.d]), ca.s*(ca.c + dc[ca.d])
+        nr, nc = ca.r + ca.s*dr[ca.d], ca.c + ca.s*dc[ca.d]
         ca.r = nr
         ca.c = nc
         tmpq.append(ca) #이동 후 원자의 위치 저장
