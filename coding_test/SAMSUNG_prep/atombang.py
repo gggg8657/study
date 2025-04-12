@@ -1,77 +1,82 @@
+from collections import deque, defaultdict
+import sys
+input = sys.stdin.readline
+
 class atom:
-    def __init__(self):
+    def __init__(self, id):  # 고유 ID 부여
+        self.id = id
         self.r = 0
         self.c = 0
         self.m = 0
         self.s = 0
         self.d = 0
 
-from collections import deque
-
 def check(cq):
-    clpsed = deque()
-    tmp = deque()
-    for i in range(len(cq)):
-        src = cq[i]
-        clpsed = deque()
-        for j in range(len(cq)):
-            tar = cq[j]
-            if src.r == tar.r and src.c == tar.c:
-                clpsed.append(tar)
-        if clpsed not in tmp and len(clpsed) >= 2:
-            tmp.append(clpsed)
-    if len(tmp) <= 0:
-        return _, False
-    else:
-        return tmp, True
+    pos_dict = defaultdict(deque)
+    for atom in cq:
+        pos_dict[(atom.r, atom.c)].append(atom)
 
-def Divide(tq, mem):
     tmp = deque()
+    for atoms in pos_dict.values():
+        if len(atoms) >= 2:
+            tmp.append(atoms)
+
+    return tmp, True if tmp else (_, False)
+
+def Divide(tq_dict, mem, unique_id):
+    new_atoms = deque()
+
     while mem:
         tmp = mem.popleft()
         total_m = 0
         total_s = 0
         direction = []
+        r = c = -1
+        ids_to_remove = []
+
         while tmp:
             atom_n = tmp.popleft()
-            tq.remove(atom_n)
+            ids_to_remove.append(atom_n.id)
             total_m += atom_n.m
-            direction.append(abs(atom_n.d % 2))
             total_s += atom_n.s
+            direction.append(atom_n.d % 2)
+            r, c = atom_n.r, atom_n.c  # 위치 기록
+
+        for _id in ids_to_remove:
+            if _id in tq_dict:
+                tq_dict.pop(_id)
 
         new_m = total_m // 5
         if new_m == 0:
             continue
-        else:
-            a, b, c, d = atom(), atom(), atom(), atom()
-            a.m = b.m = c.m = d.m = new_m
-
-        if min(direction) != max(direction):
-            a.d, b.d, c.d, d.d = 1, 3, 5, 7
-        else:
-            a.d, b.d, c.d, d.d = 0, 2, 4, 6
 
         new_s = total_s // len(direction)
-        a.s = b.s = c.s = d.s = new_s
-        a.r = b.r = c.r = d.r = atom_n.r
-        a.c = b.c = c.c = d.c = atom_n.c
+        dirs = [1, 3, 5, 7] if min(direction) != max(direction) else [0, 2, 4, 6]
 
-        q.append(a)
-        q.append(b)
-        q.append(c)
-        q.append(d)
+        for d in dirs:
+            a = atom(unique_id)
+            unique_id += 1
+            a.r, a.c = r, c
+            a.m = new_m
+            a.s = new_s
+            a.d = d
+            new_atoms.append(a)
 
-    return tq, q
+    return tq_dict, new_atoms, unique_id
 
+# 입력 처리
 n, m, k = map(int, input().split())
-dr, dc = [-1, -1, 0, 1, 1, 1, 0, -1], [0, 1, 1, 1, 0, -1, -1, -1]
-q = deque()
+dr, dc = [-1,-1,0,1,1,1,0,-1], [0,1,1,1,0,-1,-1,-1]
 
-for _ in range(m):
-    a = atom()
+q = deque()
+for i in range(m):
+    a = atom(i)
     a.r, a.c, a.m, a.s, a.d = map(int, input().split())
     q.append(a)
 
+unique_id = m  # 새 원자에 부여할 고유 ID 시작
+
+# 시뮬레이션 시작
 for _ in range(k):
     tmpq = deque()
     while q:
@@ -83,14 +88,16 @@ for _ in range(k):
         tmpq.append(ca)
 
     mem, is_collapse = check(tmpq)
+    tmpq_dict = {a.id: a for a in tmpq}
+
     if is_collapse:
-        tmpq, q = Divide(tmpq, mem)
+        tmpq_dict, new_atoms, unique_id = Divide(tmpq_dict, mem, unique_id)
+        for a in new_atoms:
+            q.append(a)
 
-    for item in tmpq:
-        q.append(item)
+    for a in tmpq_dict.values():
+        q.append(a)
 
-res = 0
-for ato in q:
-    res += ato.m
-
+# 질량 합산 결과 출력
+res = sum(a.m for a in q)
 print(res)
