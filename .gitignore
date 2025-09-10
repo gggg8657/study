@@ -5,6 +5,7 @@
 *.doc
 .pptx
 
+.idea
 *.gitignore
 *.jpg
 *.jpeg
