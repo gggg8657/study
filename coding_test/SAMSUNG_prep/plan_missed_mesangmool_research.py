@@ -1,144 +1,216 @@
+class QUERY:
+    def __init__(self, r1, c1, r2, c2):
+        self.r1 = r1
+        self.c1 = c1
+        self.r2 = r2
+        self.c2 = c2
 
-import sys
-input = sys.stdin.readline
 
-from collections import deque
+class MICRO:
+    def __init__(self, id, minR, minC, maxR, maxC, count):
+        self.id = id
+        self.minR = minR
+        self.minC = minC
+        self.maxR = maxR
+        self.maxC = maxC
+        self.count = count
 
-N, Q = map(int, input().split())
 
-q = deque()
-id =0
-for _ in range(Q):
-    id+=1
-    tmp = list(map(int, input().split()))
-    tmp.append(id)
-    q.append(tmp) # r1, c1, r2, c2, id
+class RC:
+    def __init__(self, r, c):
+        self.r = r
+        self.c = c
 
-world=[[0 for _ in range(N)]for _ in range(N)]
 
-dr, dc = [-1,0,1,0],[0,-1,0,1]
+MAX = 20
+MAX_Q = 55
 
-# def check(tq):
-#     visited = [[False for _ in range(N)]*N]
-#     while tq:
-#         r,c = tq.popleft()
-#         if world[r][c] == 0:
-#             continue
-#         for d in range(4):
-#             nr, nc = r+dr[d], c + dc[d]
-#             if 0<nr<=N and 0<nc<=N and world[nr][nc] == world[r][c] and not visited[nr][nc]:
-#                 tq.append((nr,nc))
-#                 visited[nr][nc] = True
-def erase(r1,c1,r2,c2,it):
-    for r in range(r1,r2):
-        for c in range(c1,c2):
-            if world[r][c] == id :
-                world[r][c] = 0
-    return True
+T = 1
+N, Q = 0, 0
+MAP = [[0] * MAX for _ in range(MAX)]
+query = [None] * MAX_Q
+micro = []
+mcnt = 0
+dead = [False] * MAX_Q
+dr = [-1, 0, 1, 0]
+dc = [0, 1, 0, -1]
+queue = []
 
-def check(tq, id):
-    """
-    :param tq:
-    :return:
-    만약에 r1, c1, r2, c2, id가 있어, 그럼 맵 다 만들고 그 범위 순회해
-    근데, 이게? 만약에 같은 r을 두고 보는데 (r1<r<r2) (c1<c<c2) 일때, c1 ~ c2 까지 쭉 다른id야? 그럼 그 r1,r2,c1,c2 범위에서,
-    id인것들 0으로 만들어
-    """
-    flag_col = False
-    flag_row = False
-    erased= False
-    for _ in range(id):
-        r1,r2,c1,c2,it = tq[_]
-        for r in range(r1+1,r2-1):
-            for c in range(c1+1,c2-1):
-                if world[r][c] != it:
-                    flag_col=True
-                else : flag_col=False
-            if flag_col == True: #이거 날려야되는 가로줄임 즉, 잘림
-                erased = erase(r1,c1,r2,c2,it)
-                if erased:
-                    tq.pop(_)
-                    # print(tq)
-                    return tq
-        for c in range(c1+1,c2-1):
-            for r in range(r1+1,r2-1):
-                if world[r][c] != it:
-                    flag_row = True  #
-                else:
-                    flag_row = False
-            if flag_row == True: #날려야될 세로줄, 잘림
-                erased = erase(r1, c1, r2, c2, it)
-                if erased:
-                    tq.pop(_)
-                    # print(tq)
-                    return tq
-    return tq
-def find_value_in_2d_array(array, target_value):
-    for row in array:
-        for element in row:
-            if element == target_value:
+
+def input_data():
+    global N, Q
+    N, Q = map(int, input().split())
+    for q in range(1, Q + 1):
+        r1, c1, r2, c2 = map(int, input().split())
+        query[q] = QUERY(r1, c1, r2, c2)
+
+
+def print_map(map):
+    for r in range(N):
+        for c in range(N):
+            print(map[r][c], end=' ')
+        print()
+    print()
+
+
+def insert(id, r1, c1, r2, c2):
+    for r in range(r1, r2):
+        for c in range(c1, c2):
+            MAP[r][c] = id
+
+visited=[[False for _ in range(N)]for _ in range(N)]
+
+def bfs(r, c):
+    rp, wp = 0, 0
+    minR, maxR = r, r
+    minC, maxC = c, c
+    queue.append(RC(r, c))
+    visited[r][c] = True
+
+    while rp < len(queue):
+        out = queue[rp]
+        rp += 1
+        for i in range(4):
+            nr = out.r + dr[i]
+            nc = out.c + dc[i]
+            if nr < 0 or nr >= N or nc < 0 or nc >= N:
+                continue
+            if MAP[out.r][out.c] != MAP[nr][nc] or visited[nr][nc]:
+                continue
+            queue.append(RC(nr, nc))
+            visited[nr][nc] = True
+            if nr < minR: minR = nr
+            if nc < minC: minC = nc
+            if nr > maxR: maxR = nr
+            if nc > maxC: maxC = nc
+
+    ret = MICRO(MAP[r][c], minR, minC, maxR, maxC, len(queue))
+    return ret
+
+
+def find_live_micro():
+    global mcnt
+    mcnt = 0
+    visited = [[False] * N for _ in range(N)]
+    check = [False] * MAX_Q
+
+    for r in range(N):
+        for c in range(N):
+            id = MAP[r][c]
+            if id == 0 or dead[id] or visited[r][c]:
+                continue
+            m = bfs(r, c)
+            if check[id]:
+                dead[id] = True
+                continue
+            check[id] = True
+            micro.append(m)
+
+    micro_alive = [m for m in micro if not dead[m.id]]
+    micro.clear()
+    micro.extend(micro_alive)
+
+
+def is_priority(a, b):
+    if a.count != b.count:
+        return a.count > b.count
+    return a.id < b.id
+
+
+def sort_micro():
+    micro.sort(key=lambda m: (-m.count, m.id))
+
+
+def check_move(newMAP, m, fr, fc):
+    sr, sc, er, ec = m.minR, m.minC, m.maxR, m.maxC
+    for r in range(sr, er + 1):
+        for c in range(sc, ec + 1):
+            if MAP[r][c] != m.id or MAP[r][c] == 0:
+                continue
+            newR = fr - sr + r
+            newC = fc - sc + c
+            if newR >= N or newC >= N or newMAP[newR][newC] != 0:
                 return False
-    print(f"{target_value} is not in {world}")
     return True
-def put_it_in():
-    tq = []
-    while q:
-        r1,c1,r2,c2,id = q.popleft()
-        tq.append((r1,c1,r2,c2,id))
-        for r in range(r1,r2):
-            for c in range(c1,c2):
-                world[r][c] = id
-                # print_world(world)
-                # print("*** *** ***")
-        # 일단 넣었고,
-        if id >= 2 and len(tq)>=2:
-            tq = check(tq, len(tq))
-            #TODO 지워진게 아니라, 완전 덥혀진거면, 삭제가 안되는 문제가 있음 요거 문제 있음
-            poplist=[]
-            for _ in range(len(tq)):
-                if all(tq[_][4] not in row for row in world):
-                    poplist.append(_)
-            for idx in poplist:
-                tq.pop(idx)
-            print(tq)
-        """
-            use BFS to find divided pieces || or check it with (r,c)
-            checking and erase from the world done
-        """
-
-        #TODO 그... 배양통? 으로 옮기기
-        move_it()
 
 
+def move(newMAP, m, fr, fc):
+    sr, sc, er, ec = m.minR, m.minC, m.maxR, m.maxC
+    for r in range(sr, er + 1):
+        for c in range(sc, ec + 1):
+            if MAP[r][c] != m.id or MAP[r][c] == 0:
+                continue
+            newMAP[fr - sr + r][fc - sc + c] = m.id
 
-def print_world(arr):
-    for _ in range(N):
-        print(arr[_])
-def move_it(arr):
-    for i in range(N):
-        for j in range(N):
 
-    pass
-def cal():
-    pass
+def move_micro(newMAP, m):
+    for r in range(N):
+        for c in range(N):
+            if check_move(newMAP, m, r, c):
+                move(newMAP, m, r, c)
+                return
+
+
+def move_all():
+    newMAP = [[0] * MAX for _ in range(MAX)]
+    for m in micro:
+        move_micro(newMAP, m)
+    for r in range(N):
+        for c in range(N):
+            MAP[r][c] = newMAP[r][c]
+
+
+def get_count(id):
+    for m in micro:
+        if m.id == id:
+            return m.count
+    return -1
+
+
+def get_score(maxID):
+    company = [[0] * MAX_Q for _ in range(MAX_Q)]
+    for r in range(N):
+        for c in range(N):
+            if MAP[r][c] == 0:
+                continue
+            for i in range(4):
+                nr = r + dr[i]
+                nc = c + dc[i]
+                if nr < 0 or nr >= N or nc < 0 or nc >= N:
+                    continue
+                id1 = MAP[r][c]
+                id2 = MAP[nr][nc]
+                if id1 == id2 or id2 == 0:
+                    continue
+                company[id1][id2] = True
+                company[id2][id1] = True
+
+    score = 0
+    for i in range(1, maxID):
+        for k in range(i + 1, maxID + 1):
+            if not company[i][k]:
+                continue
+            count1 = get_count(i)
+            count2 = get_count(k)
+            score += (count1 * count2)
+    return score
+
+
+def simulate():
+    for id in range(1, Q + 1):
+        r1, c1, r2, c2 = query[id].r1, query[id].c1, query[id].r2, query[id].c2
+        insert(id, r1, c1, r2, c2)
+        find_live_micro()
+        sort_micro()
+        move_all()
+        print(get_score(id))
+
 
 def main():
-    print_world(world)
-    print("\n*** *** ***\n")
-    put_it_in()
-    print_world(world)
-    print("\n*** *** ***\n")
-    move_it()
-    cal()
+    for tc in range(1, T + 1):
+        input_data()
+        simulate()
 
-main()
 
-"""
-input:
-8 4
-2 2 5 6
-2 3 5 8
-2 0 5 3
-1 1 6 6
-
-"""
+if __name__ == "__main__":
+    main()
